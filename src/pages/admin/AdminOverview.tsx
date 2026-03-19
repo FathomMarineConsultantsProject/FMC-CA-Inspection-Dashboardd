@@ -8,8 +8,9 @@ import { Button } from '@/components/ui/button';
 
 // 🛠️ CONFIGURATION
 const LOCAL_API = 'http://localhost:5000/api/inspections/all';
-const SURVEYOR_PROXY_API = '/api-external/api/shared/forms'; // Vite Proxy Path
-const API_KEY = 'FMC_SHARE_9f2b7c1d8e4a6m3q';
+const SURVEYOR_API_PROXY = "https://surveyor-form-backend.vercel.app/api/shared/forms";
+const API_KEY = "FMC_SHARE_9f2b7c1d8e4a6m3q";
+
 
 const AdminOverview = () => {
   const [data, setData] = useState({ inspections: [], quotes: [], surveyors: [] });
@@ -22,7 +23,7 @@ const AdminOverview = () => {
       const internalRes = await axios.get(LOCAL_API);
       
       // 2. Fetch external Surveyor data via Proxy
-      const surveyorRes = await axios.get(SURVEYOR_PROXY_API, {
+      const surveyorRes = await axios.get(SURVEYOR_API_PROXY, {
         headers: { "x-api-key": API_KEY }
       });
 

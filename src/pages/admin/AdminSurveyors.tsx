@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 
 // 🛠️ API CONFIGURATION
 // We use the proxy path to bypass CORS header restrictions on localhost
-const SURVEYOR_API_PROXY = "/api-external/api/shared/forms";
+const SURVEYOR_API_PROXY = "https://surveyor-form-backend.vercel.app/api/shared/forms";
 const API_KEY = "FMC_SHARE_9f2b7c1d8e4a6m3q";
 
 const AdminSurveyors = () => {
