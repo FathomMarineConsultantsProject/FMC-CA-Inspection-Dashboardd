@@ -94,7 +94,7 @@ const AdminAssignSurveyor = () => {
     try {
       for (let surveyor of selectedData) {
         console.log(`📤 Sending request to: ${surveyor.email}`);
-        const res = await fetch(`${BASE_URL}/api/enquiries`, {
+        const res = await fetch(`${BASE_URL}/api/enquiries/create`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
