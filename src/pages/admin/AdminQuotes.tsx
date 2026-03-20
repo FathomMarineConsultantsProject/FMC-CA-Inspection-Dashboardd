@@ -44,7 +44,7 @@ const AdminQuotes = () => {
     if (!request || !amount) return;
 
     try {
-      await axios.post('fmc-client-admin-dashboard-backend.vercel.app/api/quotes/send', {
+      await axios.post('https://fmc-client-admin-dashboard-backend.vercel.app/api/quotes/send', {
         requestId: request.requestId,
         clientEmail: request.clientEmail,
         inspectionType: request.inspectionType,

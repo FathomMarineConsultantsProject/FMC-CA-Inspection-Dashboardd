@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 // 🌐 URL Configuration
-const BASE_URL = "fmc-client-admin-dashboard-backend.vercel.app";
+const BASE_URL = "https://fmc-client-admin-dashboard-backend.vercel.app/";
 // Try calling directly first; if it fails, the code is set up to log why.
 const SURVEYOR_API_URL = "https://surveyor-form-backend.vercel.app/api/shared/forms";
 const API_KEY = "FMC_SHARE_9f2b7c1d8e4a6m3q"; 

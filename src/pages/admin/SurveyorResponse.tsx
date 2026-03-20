@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 
-const BASE_URL = "fmc-client-admin-dashboard-backend.vercel.app"; // Apne backend URL se replace karein
+const BASE_URL = "https://fmc-client-admin-dashboard-backend.vercel.app/"; // Apne backend URL se replace karein
 
 const SurveyorResponse = () => {
   const { token } = useParams();

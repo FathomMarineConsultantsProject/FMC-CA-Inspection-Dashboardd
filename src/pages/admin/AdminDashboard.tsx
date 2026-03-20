@@ -7,7 +7,7 @@ import { FileText, Clock, Activity, CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 // ✅ CONFIG (NO PROXY)
-const BACKEND_URL = "fmc-client-admin-dashboard-backend.vercel.app"; 
+const BACKEND_URL = "https://fmc-client-admin-dashboard-backend.vercel.app/"; 
 const SURVEYOR_API = "https://surveyor-form-backend.vercel.app/api/shared/forms";
 const API_KEY = "FMC_SHARE_9f2b7c1d8e4a6m3q";
 
