@@ -22,7 +22,7 @@ const AdminQuotes = () => {
   // Fetch data from backend
   const fetchData = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/inspections/all');
+      const res = await axios.get('https://fmc-client-admin-dashboard-backend.vercel.app/api/inspections/all');
       // Assuming backend returns { inspections, quotes }
       setInspections(res.data.inspections || []);
       setQuotes(res.data.quotes || []);
@@ -44,7 +44,7 @@ const AdminQuotes = () => {
     if (!request || !amount) return;
 
     try {
-      await axios.post('http://localhost:5000/api/quotes/send', {
+      await axios.post('https://fmc-client-admin-dashboard-backend.vercel.app/api/quotes/send',  {
         requestId: request.requestId,
         clientEmail: request.clientEmail,
         inspectionType: request.inspectionType,

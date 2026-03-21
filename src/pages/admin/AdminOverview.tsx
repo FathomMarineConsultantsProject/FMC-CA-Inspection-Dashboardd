@@ -7,7 +7,8 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 
 // 🛠️ CONFIGURATION
-const LOCAL_API = 'http://localhost:5000/api/inspections/all';
+// 🛠️ CONFIGURATION
+const LOCAL_API = 'https://fmc-client-admin-dashboard-backend.vercel.app/api/inspections/all';
 const SURVEYOR_API_PROXY = "https://surveyor-form-backend.vercel.app/api/shared/forms";
 const API_KEY = "FMC_SHARE_9f2b7c1d8e4a6m3q";
 

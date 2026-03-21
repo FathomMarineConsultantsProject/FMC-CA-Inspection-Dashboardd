@@ -23,12 +23,12 @@ const AdminRequests = () => {
     const fetchData = async () => {
       try {
         // 1. Fetch Client Requests
-        const resRequests = await axios.get('fmc-client-admin-dashboard-backend.vercel.app/api/requests/all');
+       const resRequests = await axios.get('https://fmc-client-admin-dashboard-backend.vercel.app/api/requests/all');
         const reqData = Array.isArray(resRequests.data) ? resRequests.data : resRequests.data.inspections;
         setInspections(reqData || []);
 
         // 2. Fetch Surveyor Enquiries (Availability tracking)
-        const resEnquiries = await axios.get('fmc-client-admin-dashboard-backend.vercel.app/api/enquiries/all');
+        const resEnquiries = await axios.get('https://fmc-client-admin-dashboard-backend.vercel.app/api/enquiries/all');
         setEnquiries(resEnquiries.data || []);
 
       } catch (err) {

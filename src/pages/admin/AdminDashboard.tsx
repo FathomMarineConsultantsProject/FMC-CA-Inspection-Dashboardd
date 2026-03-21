@@ -6,8 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { FileText, Clock, Activity, CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-// ✅ CONFIG (NO PROXY)
-const BACKEND_URL = "http://localhost:5000/api/inspections"; 
+// ✅ CONFIG (NO PROXY)// ✅ Change this
+const BACKEND_URL = "https://fmc-client-admin-dashboard-backend.vercel.app/api/inspections";
 const SURVEYOR_API = "https://surveyor-form-backend.vercel.app/api/shared/forms";
 const API_KEY = "FMC_SHARE_9f2b7c1d8e4a6m3q";
 
