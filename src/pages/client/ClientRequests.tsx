@@ -8,6 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
+// ✅ Updated Backend URL
+const API_BASE_URL = 'https://fmc-client-admin-dashboard-backend.vercel.app/api/inspections';
+
 const ClientRequests = () => {
   const { user } = useAuth();
   const [inspections, setInspections] = useState<any[]>([]);
@@ -17,9 +20,7 @@ const ClientRequests = () => {
   const fetchData = async () => {
     if (!user?.email) return;
     try {
-      // We use the 'all' endpoint but filter locally, 
-      // or you could create a /api/inspections/my-requests/:email endpoint
-      const res = await axios.get(`http://localhost:5000/api/inspections/all`);
+      const res = await axios.get(`${API_BASE_URL}/all`);
       
       const allInspections = res.data.inspections || [];
       const allQuotes = res.data.quotes || [];
@@ -40,13 +41,13 @@ const ClientRequests = () => {
 
   const handleQuote = async (quoteId: string, action: 'Approved' | 'Rejected') => {
     try {
-      // Hits your Patch route: router.patch('/update-quote/:id', ...)
-      await axios.patch(`http://localhost:5000/api/inspections/update-quote/${quoteId}`, { 
+      // ✅ Corrected Endpoint and ID
+      await axios.patch(`${API_BASE_URL}/update-quote/${quoteId}`, { 
         status: action 
       });
       
       toast.success(`Quote ${action.toLowerCase()} successfully`);
-      fetchData(); // Refresh to update statuses
+      fetchData(); 
     } catch (err) {
       toast.error("Failed to update quote status");
     }
@@ -63,7 +64,6 @@ const ClientRequests = () => {
         <p className="text-muted-foreground text-sm mt-1">Track and manage your survey requests</p>
       </div>
 
-      {/* Actionable Pending Quotes */}
       {pendingQuotes.length > 0 && (
         <Card className="border-primary/20 bg-primary/5 shadow-sm">
           <CardHeader className="pb-3">
@@ -71,7 +71,7 @@ const ClientRequests = () => {
           </CardHeader>
           <CardContent className="grid gap-3">
             {pendingQuotes.map(q => (
-              <div key={q.id} className="flex items-center justify-between p-4 rounded-xl bg-card border shadow-sm">
+              <div key={q._id} className="flex items-center justify-between p-4 rounded-xl bg-card border shadow-sm">
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-mono text-muted-foreground">{q.requestId}</span>
@@ -81,8 +81,8 @@ const ClientRequests = () => {
                   <p className="text-xs text-muted-foreground">{q.port}</p>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={() => handleQuote(q.id, 'Rejected')}>Decline</Button>
-                  <Button size="sm" onClick={() => handleQuote(q.id, 'Approved')}>Approve & Proceed</Button>
+                  <Button variant="outline" size="sm" onClick={() => handleQuote(q._id, 'Rejected')}>Decline</Button>
+                  <Button size="sm" onClick={() => handleQuote(q._id, 'Approved')}>Approve & Proceed</Button>
                 </div>
               </div>
             ))}
@@ -90,7 +90,6 @@ const ClientRequests = () => {
         </Card>
       )}
 
-      {/* Full Request History */}
       <Card className="border-none shadow-sm overflow-hidden">
         <CardContent className="p-0">
           <Table>

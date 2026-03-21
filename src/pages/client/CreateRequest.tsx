@@ -16,6 +16,9 @@ import { INSPECTION_TYPES, SHIP_TYPES } from '@/data/mockData';
 import { InspectionType, ShipType } from '@/types';
 import { toast } from 'sonner';
 
+// ✅ Updated Backend URL
+const SUBMIT_API_URL = 'https://fmc-client-admin-dashboard-backend.vercel.app/api/inspections/add';
+
 const CreateRequest = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -48,10 +51,10 @@ const CreateRequest = () => {
         country,
         dateFrom: format(dateFrom, 'yyyy-MM-dd'),
         dateTo: format(dateTo, 'yyyy-MM-dd'),
-        status: 'Pending Review' // Default initial status
+        status: 'Pending Review'
       };
 
-      await axios.post('http://localhost:5000/api/inspections/add', payload);
+      await axios.post(SUBMIT_API_URL, payload);
       
       toast.success('Inspection request submitted successfully!');
       navigate('/client');
