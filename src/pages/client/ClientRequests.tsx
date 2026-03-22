@@ -11,6 +11,8 @@ import { toast } from 'sonner';
 // ✅ Updated Backend URL
 const API_BASE_URL = 'https://fmc-client-admin-dashboard-backend.vercel.app/api/inspections';
 
+// ... imports same rahenge ...
+
 const ClientRequests = () => {
   const { user } = useAuth();
   const [inspections, setInspections] = useState<any[]>([]);
@@ -20,40 +22,54 @@ const ClientRequests = () => {
   const fetchData = async () => {
     if (!user?.email) return;
     try {
+      setLoading(true);
+      // ✅ 1. Check kijiye aapka backend /all par kya bhej raha hai.
+      // Agar backend sirf array bhej raha hai (res.json(inspections)), toh niche wala code use karein:
       const res = await axios.get(`${API_BASE_URL}/all`);
       
-      const allInspections = res.data.inspections || [];
-      const allQuotes = res.data.quotes || [];
+      const allData = Array.isArray(res.data) ? res.data : res.data.inspections || [];
 
-      // Filter data only for THIS client
-      setInspections(allInspections.filter((i: any) => i.clientEmail === user.email));
-      setQuotes(allQuotes.filter((q: any) => q.clientEmail === user.email));
+      // ✅ 2. Filter logic (User email ke basis par)
+      const userInspections = allData.filter((i: any) => i.clientEmail === user.email);
+      
+      setInspections(userInspections);
+
+      // ✅ 3. Quotes logic: Agar quotes alag collection mein hain toh alag call lagegi.
+      // Agar inspections ke andar hi amount field hai, toh wahi se quotes nikalenge.
+      setQuotes(userInspections.filter((i: any) => i.status === 'Quote Sent' || i.status === 'Pending'));
+      
     } catch (err) {
+      console.error("Fetch Error:", err);
       toast.error("Failed to load your requests");
     } finally {
       setLoading(false);
     }
   };
 
+  // Naya submit hone par refresh karne ke liye window focus handle kar sakte hain
   useEffect(() => {
     fetchData();
-  }, [user]);
+  }, [user?.email]); // Depend on user email
 
   const handleQuote = async (quoteId: string, action: 'Approved' | 'Rejected') => {
     try {
-      // ✅ Corrected Endpoint and ID
-      await axios.patch(`${API_BASE_URL}/update-quote/${quoteId}`, { 
-        status: action 
+      // Backend route check karein: /update-quote ya /update/:id
+      await axios.patch(`${API_BASE_URL}/update/${quoteId}`, { 
+        status: action === 'Approved' ? 'Quote Approved' : 'Rejected' 
       });
       
-      toast.success(`Quote ${action.toLowerCase()} successfully`);
-      fetchData(); 
+      toast.success(`Request ${action.toLowerCase()} successfully`);
+      fetchData(); // ✅ Naya data turant fetch karein
     } catch (err) {
-      toast.error("Failed to update quote status");
+      toast.error("Failed to update status");
     }
   };
 
-  const pendingQuotes = quotes.filter(q => q.status === 'Pending');
+
+  // Filter logic fix
+const pendingQuotes = quotes.filter(q => 
+  q.status === 'Pending' || q.status === 'Pending Review' || q.status === 'Quote Sent'
+);
 
   if (loading) return <div className="flex h-64 items-center justify-center"><Loader2 className="animate-spin" /></div>;
 
@@ -77,7 +93,10 @@ const ClientRequests = () => {
                     <span className="text-xs font-mono text-muted-foreground">{q.requestId}</span>
                     <p className="text-sm font-bold">{q.inspectionType}</p>
                   </div>
-                  <p className="text-2xl font-black mt-1">${q.amount.toLocaleString()}</p>
+                 
+        <p className="text-2xl font-black mt-1">
+         ${q.fees ? q.fees.toLocaleString() : '0'}
+        </p>
                   <p className="text-xs text-muted-foreground">{q.port}</p>
                 </div>
                 <div className="flex gap-2">

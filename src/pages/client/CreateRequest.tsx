@@ -17,7 +17,7 @@ import { InspectionType, ShipType } from '@/types';
 import { toast } from 'sonner';
 
 // ✅ Updated Backend URL
-const SUBMIT_API_URL = 'https://fmc-client-admin-dashboard-backend.vercel.app/api/inspections/add';
+const SUBMIT_API_URL = 'https://fmc-client-admin-dashboard-backend.vercel.app/api/requests/create';
 
 const CreateRequest = () => {
   const { user } = useAuth();
@@ -42,17 +42,17 @@ const CreateRequest = () => {
     setIsSubmitting(true);
 
     try {
-      const payload = {
-        clientId: user?.id,
-        clientEmail: user?.email,
-        inspectionType,
-        shipType,
-        port,
-        country,
-        dateFrom: format(dateFrom, 'yyyy-MM-dd'),
-        dateTo: format(dateTo, 'yyyy-MM-dd'),
-        status: 'Pending Review'
-      };
+     const payload = {
+  clientId: user?.id,
+  clientEmail: user?.email,
+  inspectionType, // Frontend se
+  shipType,       // Frontend se
+  port,
+  country,
+  dateFrom: format(dateFrom, 'yyyy-MM-dd'),
+  dateTo: format(dateTo, 'yyyy-MM-dd'),
+  status: 'Pending Review'
+};
 
       await axios.post(SUBMIT_API_URL, payload);
       
