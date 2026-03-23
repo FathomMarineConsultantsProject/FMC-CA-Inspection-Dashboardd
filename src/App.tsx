@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { DataProvider } from "@/contexts/DataContext";
-
+import Register from "./pages/Register";
 // --- PAGES ---
 import Login from "./pages/Login";
 import AdminLayout from "./components/layout/AdminLayout";
@@ -54,6 +54,7 @@ const AppRoutes = () => {
           ? <Navigate to={user?.role === 'admin' ? '/admin' : '/client'} replace />
           : <Login />
       } />
+<Route path="/register" element={<Register />} />
 
       {/* 🟢 PUBLIC ROUTE: Surveyor response page (Login ki zaroorat nahi) */}
       <Route path="/surveyor-enquiry/:token" element={<SurveyorResponse />} />

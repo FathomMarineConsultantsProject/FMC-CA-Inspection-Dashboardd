@@ -103,8 +103,16 @@ const Login = () => {
           </CardContent>
         </Card>
       </div>
+      <Button 
+  variant="outline" 
+  className="w-full mt-2"
+  onClick={() => navigate('/register')}
+>
+  New Client? Register Here
+</Button>
     </div>
   );
 };
+
 
 export default Login;

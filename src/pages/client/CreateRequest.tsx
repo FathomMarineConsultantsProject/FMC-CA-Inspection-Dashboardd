@@ -16,8 +16,7 @@ import { INSPECTION_TYPES, SHIP_TYPES } from '@/data/mockData';
 import { InspectionType, ShipType } from '@/types';
 import { toast } from 'sonner';
 
-// ✅ Updated Backend URL
-const SUBMIT_API_URL = 'https://fmc-client-admin-dashboard-backend.vercel.app/api/requests/create';
+const API_URL = 'https://fmc-client-admin-dashboard-backend.vercel.app/api/requests/add';
 
 const CreateRequest = () => {
   const { user } = useAuth();
@@ -42,25 +41,23 @@ const CreateRequest = () => {
     setIsSubmitting(true);
 
     try {
-     const payload = {
-  clientId: user?.id,
-  clientEmail: user?.email,
-  inspectionType, // Frontend se
-  shipType,       // Frontend se
-  port,
-  country,
-  dateFrom: format(dateFrom, 'yyyy-MM-dd'),
-  dateTo: format(dateTo, 'yyyy-MM-dd'),
-  status: 'Pending Review'
-};
+      const payload = {
+        clientId: user?.id, 
+        clientEmail: user?.email, 
+        inspectionType,
+        shipType,
+        port,
+        country,
+        dateFrom: dateFrom ? format(dateFrom, 'yyyy-MM-dd') : null,
+        dateTo: dateTo ? format(dateTo, 'yyyy-MM-dd') : null,
+        status: 'pending review' // Backend Enum match
+      };
 
-      await axios.post(SUBMIT_API_URL, payload);
-      
+      await axios.post(API_URL, payload);
       toast.success('Inspection request submitted successfully!');
       navigate('/client');
     } catch (error: any) {
-      console.error(error);
-      toast.error(error.response?.data?.error || 'Failed to submit request');
+      toast.error(error.response?.data?.msg || 'Failed to submit request');
     } finally {
       setIsSubmitting(false);
     }
@@ -70,7 +67,7 @@ const CreateRequest = () => {
     <div className="max-w-2xl mx-auto animate-fade-in pb-10">
       <div className="mb-6">
         <h1 className="text-2xl font-bold font-display">Create Inspection Request</h1>
-        <p className="text-muted-foreground text-sm mt-1">Submit a new vessel inspection request for review</p>
+        <p className="text-muted-foreground text-sm mt-1">Submit a new vessel inspection request</p>
       </div>
 
       <Card className="border-none shadow-md">
@@ -140,14 +137,7 @@ const CreateRequest = () => {
             </div>
 
             <Button type="submit" className="w-full h-11" disabled={isSubmitting}>
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Submitting...
-                </>
-              ) : (
-                'Submit Inspection Request'
-              )}
+              {isSubmitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...</> : 'Submit Request'}
             </Button>
           </form>
         </CardContent>
