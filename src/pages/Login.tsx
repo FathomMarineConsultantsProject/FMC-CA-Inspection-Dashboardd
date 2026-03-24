@@ -1,118 +1,160 @@
-import React, { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Anchor, Ship } from 'lucide-react';
-import { toast } from 'sonner';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext"; // ✅ IMPORTANT
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Anchor } from "lucide-react";
+import { toast } from "sonner";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
   const navigate = useNavigate();
+  const { login } = useAuth(); // ✅ IMPORTANT
+
+  const API = "https://fmc-client-admin-dashboard-backend.vercel.app";
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const success = await login(email, password);
-    setLoading(false);
-    if (success) {
-      const user = email.includes('admin') ? 'admin' : 'client';
-      navigate(user === 'admin' ? '/admin' : '/client');
-      toast.success('Welcome back!');
-    } else {
-      toast.error('Invalid credentials. Try: client@shipping.com or admin@fathommarine.com');
+
+    try {
+      const res = await fetch(`${API}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+      setLoading(false);
+
+      console.log("LOGIN DATA:", data); // 🔍 Debug
+
+      if (res.ok && data?.user) {
+        // ✅ USE AUTH CONTEXT (FIX)
+        login(data.user, data.token);
+
+        // ✅ NAVIGATION
+        if (data.user.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/client");
+        }
+
+        toast.success("Login successful 🚀");
+      } else {
+        toast.error(data.msg || "Invalid credentials");
+      }
+
+    } catch (err) {
+      setLoading(false);
+      console.error(err);
+      toast.error("Server error");
     }
   };
 
   return (
     <div className="flex min-h-screen">
-      {/* Left panel */}
+      {/* LEFT PANEL */}
       <div className="hidden lg:flex lg:w-1/2 bg-primary flex-col justify-center items-center p-12">
         <div className="max-w-md text-center">
           <div className="flex items-center justify-center gap-3 mb-8">
             <Anchor className="h-12 w-12 text-secondary" />
             <div className="text-left">
-              <h1 className="text-2xl font-bold text-primary-foreground font-display">Fathom Marine</h1>
-              <p className="text-sm text-sidebar-foreground">Consultants Pvt Ltd</p>
+              <h1 className="text-2xl font-bold text-primary-foreground">
+                Fathom Marine
+              </h1>
+              <p className="text-sm text-primary-foreground/70">
+                Consultants Pvt Ltd
+              </p>
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-primary-foreground font-display mb-4">
+
+          <h2 className="text-3xl font-bold text-primary-foreground mb-4">
             Marine Inspection Management
           </h2>
-          <p className="text-sidebar-foreground text-lg leading-relaxed">
-            Streamline your vessel inspections from request to completion. Professional survey management made simple.
+
+          <p className="text-primary-foreground/80 text-lg">
+            Manage vessel inspections, clients, and reports in one powerful dashboard.
           </p>
-          <div className="mt-12 flex items-center justify-center gap-6 text-sidebar-foreground/60">
-            <Ship className="h-8 w-8" />
-            <Ship className="h-6 w-6" />
-            <Ship className="h-10 w-10" />
-          </div>
         </div>
       </div>
 
-      {/* Right panel */}
+      {/* RIGHT PANEL */}
       <div className="flex-1 flex items-center justify-center p-8 bg-background">
-        <Card className="w-full max-w-md border-0 shadow-lg">
-          <CardHeader className="text-center pb-2">
+        <Card className="w-full max-w-md shadow-lg">
+          <CardHeader className="text-center">
             <div className="flex items-center justify-center gap-2 mb-4 lg:hidden">
-              <Anchor className="h-8 w-8 text-secondary" />
-              <span className="text-xl font-bold text-primary font-display">Fathom Marine</span>
+              <Anchor className="h-8 w-8 text-primary" />
+              <span className="text-xl font-bold">Fathom Marine</span>
             </div>
-            <CardTitle className="text-2xl font-display">Sign In</CardTitle>
-            <CardDescription>Enter your credentials to access the system</CardDescription>
+
+            <CardTitle className="text-2xl">Sign In</CardTitle>
+            <CardDescription>
+              Enter your email and password to continue
+            </CardDescription>
           </CardHeader>
+
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
+
+              {/* EMAIL */}
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label>Email</Label>
                 <Input
-                  id="email"
                   type="email"
-                  placeholder="your@email.com"
+                  placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
+
+              {/* PASSWORD */}
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label>Password</Label>
                 <Input
-                  id="password"
                   type="password"
-                  placeholder="••••••••"
+                  placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
+
+              {/* BUTTON */}
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? 'Signing in...' : 'Sign In'}
+                {loading ? "Signing in..." : "Sign In"}
               </Button>
+
             </form>
-            <div className="mt-6 p-4 rounded-lg bg-muted">
-              <p className="text-xs text-muted-foreground font-medium mb-2">Demo Accounts:</p>
-              <p className="text-xs text-muted-foreground">Client: client@shipping.com</p>
-              <p className="text-xs text-muted-foreground">Admin: admin@fathommarine.com</p>
-              <p className="text-xs text-muted-foreground mt-1">(any password)</p>
-            </div>
+
+            {/* REGISTER BUTTON */}
+            <Button
+              variant="outline"
+              className="w-full mt-4"
+              onClick={() => navigate("/register")}
+            >
+              New Client? Register Here
+            </Button>
+
           </CardContent>
         </Card>
       </div>
-      <Button 
-  variant="outline" 
-  className="w-full mt-2"
-  onClick={() => navigate('/register')}
->
-  New Client? Register Here
-</Button>
     </div>
   );
 };
-
 
 export default Login;

@@ -1,10 +1,13 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import { User, UserRole } from '@/types';
-import { mockUsers } from '@/data/mockData';
+import React, { createContext, useContext, useState, useEffect } from "react";
+
+interface User {
+  email: string;
+  role: "admin" | "client";
+}
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (userData: User, token: string) => void;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -13,33 +16,45 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export const useAuth = () => {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
+  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
   return ctx;
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(() => {
-    const saved = localStorage.getItem('fathom_user');
-    return saved ? JSON.parse(saved) : null;
-  });
+  const [user, setUser] = useState<User | null>(null);
 
-  const login = useCallback(async (email: string, _password: string): Promise<boolean> => {
-    const found = mockUsers.find(u => u.email === email);
-    if (found) {
-      setUser(found);
-      localStorage.setItem('fathom_user', JSON.stringify(found));
-      return true;
+  // ✅ Load from localStorage
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
+
+    if (storedUser && token) {
+      setUser(JSON.parse(storedUser));
     }
-    return false;
   }, []);
 
-  const logout = useCallback(() => {
+  // ✅ REAL LOGIN (from backend response)
+  const login = (userData: User, token: string) => {
+    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("token", token);
+    setUser(userData);
+  };
+
+  const logout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
     setUser(null);
-    localStorage.removeItem('fathom_user');
-  }, []);
+  };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        isAuthenticated: !!user,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
